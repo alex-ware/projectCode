@@ -23,13 +23,13 @@ def search(input: dict[tuple, tuple]) -> list[tuple]:
     for key, value in board.items():
         if 'r' in value:
             cell = key
-    print(board.get(cell))
+    #print(board[cell][1])
     
     # extracting coordinates from starting cell
-    (r,q) = cell
+    #(r,q) = cell
     
     # making use of more manageable vector forms
-    directions = vector_maker()
+    #directions = vector_maker()
     
     # applying a vector on some cell
     #vector = directions['nw']
@@ -42,7 +42,15 @@ def search(input: dict[tuple, tuple]) -> list[tuple]:
     #print(next_cell)
     
     # building on above, try applying a spread move
-    spread_move(board, r, q, board.get(cell[1]), 's')
+    spread_move(board, cell, 's')
+    print(board)
+    spread_move(board, (3,1), 'se')
+    print(board)
+    spread_move(board, (3,2), 's')
+    print(board)
+    spread_move(board, (1,4), 'nw')
+    print(board)
+    spread_move(board, (1,3), 'nw')
     print(board)
     
     actions = [
@@ -82,14 +90,43 @@ def vector_maker():
     return directions
 
 # function to handle the spread move   
-def spread_move(board, r, q, stack, dir):
+def spread_move(board, cell, dir):
     directions = vector_maker()
+    (r,q) = cell
+    
+    # height of stack at this cell we finna spread
+    stack = board[cell][1]
     
     # 'kill' the cell we are spreading from
-    key = (r,q)
-    board.pop(key)
+    board.pop(cell)
     
-    
-    
-    print(board)
-    #for i in range(1, stack):
+    # update the rest of board after spread
+    for i in range(1, stack + 1):
+        # navigate to the iᵗʰ cell of the spread
+        vector = directions[dir]
+        next_r = r + vector[0] * i
+        next_q = q + vector[1] * i
+        # make sure we adhere to infinite tiling 
+        next_cell = bound_out(next_r, next_q)
+        #print(next_cell)
+        
+        # updating the iᵗʰ cell of the spread in board representation
+        # if the cell is unoccupied we spread over it
+        if(next_cell not in board):
+            board[next_cell] = ('r', 1)
+        
+        # if cell is occupied we spread on top of it
+        else:
+            this_stack = board[next_cell][1]
+            if(this_stack == 6):
+                # kill cell if stack becomes > 6 :(
+                board.pop(next_cell)
+            else:
+                board[next_cell] = ('r', this_stack + 1)
+                
+    return board
+                                    
+        
+        
+            
+        
