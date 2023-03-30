@@ -17,41 +17,39 @@ def search(input: dict[tuple, tuple]) -> list[tuple]:
     # to True to see a colour-coded version (if your terminal supports it).
     # print(render_board(input, ansi=True))
     board = input
-    print(board)
     
     # find our starting cell
     for key, value in board.items():
         if 'r' in value:
             cell = key
-    #print(board[cell][1])
     
-    # extracting coordinates from starting cell
-    #(r,q) = cell
+    """
+    # mimics correct solution of spreading on our own ver of board
+    print(board)
+    print(render_board(board, ansi=True))
     
-    # making use of more manageable vector forms
-    #directions = vector_maker()
-    
-    # applying a vector on some cell
-    #vector = directions['nw']
-    #next_r = r + vector[0]
-    #next_q = q + vector[1]  
-    
-    # accounting for infinite tiling
-    #next_cell = bound_out(next_r, next_q)
-    
-    #print(next_cell)
-    
-    # building on above, try applying a spread move
     spread_move(board, cell, 's')
     print(board)
+    print(render_board(board, ansi=True))
+    
     spread_move(board, (3,1), 'se')
     print(board)
+    print(render_board(board, ansi=True))
+    
     spread_move(board, (3,2), 's')
     print(board)
+    print(render_board(board, ansi=True))
+    
     spread_move(board, (1,4), 'nw')
     print(board)
+    print(render_board(board, ansi=True))
+    
     spread_move(board, (1,3), 'nw')
     print(board)
+    print(render_board(board, ansi=True))
+    """
+    
+    loop_board_search(board, cell)
     
     actions = [
         (5, 6, -1, 1),
@@ -75,6 +73,7 @@ def bound_out(r, q):
         r += 7  
     if q < 0:
         q += 7 
+        
     return (r, q)   
 
 # mini function to create vector dictionary to make moves more manageable
@@ -87,6 +86,7 @@ def vector_maker():
         'sw': (-1, 0), #</
         'nw': ( 0,-1)  #<\
     }
+    
     return directions
 
 # function to handle the spread move   
@@ -108,7 +108,6 @@ def spread_move(board, cell, dir):
         next_q = q + vector[1] * i
         # make sure we adhere to infinite tiling 
         next_cell = bound_out(next_r, next_q)
-        #print(next_cell)
         
         # updating the iᵗʰ cell of the spread in board representation
         # if the cell is unoccupied we spread over it
@@ -122,11 +121,27 @@ def spread_move(board, cell, dir):
                 # kill cell if stack becomes > 6 :(
                 board.pop(next_cell)
             else:
-                board[next_cell] = ('r', this_stack + 1)
-                
+    
+                board[next_cell] = ('r', this_stack + 1)           
     return board
-                                    
-        
+
+# just spreads across the board until everything is red                                 
+def loop_board_search(board, start_cell):
+    (r, q) = start_cell
+            
+    for i in range(0, 7):
+        for j in range(0, 7):
+            if((r + i > 6) and (q + j > 6)):
+                spread_move(board, (r + i - 7, q + j - 7), 'ne')
+            if((r + i > 6) and (q + j <= 6)):
+                spread_move(board, (r + i - 7, q + j), 'ne')
+            if((r + i <= 6) and (q + j > 6)):
+                spread_move(board, (r + i, q + j - 7), 'ne')     
+            else:
+                spread_move(board, (r + i, q + j), 'ne')
+            print(board)
+            print(render_board(board, ansi=True))
+            
         
             
         
