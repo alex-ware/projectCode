@@ -27,18 +27,11 @@ def search(input: dict[tuple, tuple]) -> list[tuple]:
             
     print(board.get(cell))
     
-    # extracting coordinates from cell
+    # extracting coordinates from starting cell
     (r,q) = cell
     
-    # dictionary to make direction vectors more manageable
-    directions = {
-        'n' : (+1,-1), #/\
-        'ne': (+1, 0), #/>
-        'se': ( 0,+1), #\>
-        's' : (-1,+1), #\/
-        'sw': (-1, 0), #</
-        'nw': ( 0,-1)  #<\
-    }
+    # making use of more manageable vector forms
+    directions = vector_maker()
     
     # applying a vector on some cell
     vector = directions['nw']
@@ -49,7 +42,6 @@ def search(input: dict[tuple, tuple]) -> list[tuple]:
     next_cell = bound_out(next_r, next_q)
     
     print(next_cell)
-
     
     actions = [
         (5, 6, -1, 1),
@@ -74,3 +66,22 @@ def bound_out(r, q):
     if q < 0:
         q += 7 
     return (r, q)   
+
+# mini function to create vector dictionary to make moves more manageable
+def vector_maker():
+    directions = {
+        'n' : (+1,-1), #/\
+        'ne': (+1, 0), #/>
+        'se': ( 0,+1), #\>
+        's' : (-1,+1), #\/
+        'sw': (-1, 0), #</
+        'nw': ( 0,-1)  #<\
+    }
+    return directions
+
+# function to handle the spread move   
+def spread_move(r, q, stack, dir):
+    directions = vector_maker()
+    
+    for i in range(1, stack):
+        
