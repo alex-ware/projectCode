@@ -17,6 +17,7 @@ def search(input: dict[tuple, tuple]) -> list[tuple]:
     # to True to see a colour-coded version (if your terminal supports it).
     # print(render_board(input, ansi=True))
     board = input
+    print(board)
     
     # find our starting cell
     for key, value in board.items():
@@ -48,8 +49,10 @@ def search(input: dict[tuple, tuple]) -> list[tuple]:
     print(board)
     print(render_board(board, ansi=True))
     """
-    
+    print(render_board(board, ansi = True))
     loop_board_search(board, cell)
+    #print(neighbour_same(board, (1,1), 'n'))
+   
     
     actions = [
         (5, 6, -1, 1),
@@ -125,10 +128,25 @@ def spread_move(board, cell, dir):
                 board[next_cell] = ('r', this_stack + 1)           
     return board
 
-# just spreads across the board until everything is red                                 
+# just spreads across the board until everything is red                                
 def loop_board_search(board, start_cell):
     (r, q) = start_cell
-            
+    dir = 'ne'
+    
+    i = 0
+    j = 0
+    while (j < 6):    
+        stack = board[bound_out(r + i, q + j)][1]
+        spread_move(board, bound_out(r + i, q + j), dir)
+        i = i + stack
+        print(render_board(board, ansi = True))
+        dir = 'ne'
+        if (i == 6):
+            j += 1
+            i = 0
+            dir = 's'
+    
+    """        
     for i in range(0, 7):
         for j in range(0, 7):
             if((r + i > 6) and (q + j > 6)):
@@ -141,7 +159,29 @@ def loop_board_search(board, start_cell):
                 spread_move(board, (r + i, q + j), 'ne')
             print(board)
             print(render_board(board, ansi=True))
-            
-        
+    """
+
+     
+# function to check difference between a cell and its neighbour in direction 'dir'       
+def neighbour_same(board, cell, dir):
+    (r, q) = cell
+    directions = vector_maker()
+    vector = directions[dir]
+    
+    neighbour_r = r + vector[0]
+    neighbour_q = q + vector[1]
+    neighbour = bound_out(neighbour_r, neighbour_q)
+    
+    # neighbour cell is not occupied
+    if(neighbour not in board):
+        return 0
+    
+    # neighbour cell is same colour as subject cell    
+    if(board[cell][0] == board[neighbour][0]):
+        return 1
+    
+    # neighbour cell is different colour to subject cell
+    else:
+        return 0             
             
         
